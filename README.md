@@ -1,4 +1,4 @@
-# eth-playground
+# light-eth-playground
 An Ethereum private network running on Docker to mess with Blockchain and smart contracts.   
 <p align="center">
 <img src="https://github.com/rubenafo/eth-playground/blob/master/imgs/eth-stats.png" width="600">
@@ -8,6 +8,7 @@ An Ethereum private network running on Docker to mess with Blockchain and smart 
 
 To provide a simple, private Ethereum setup as close as possible to a production environment where the nodes are completely independent and just share the same network.   
 The setup is simple enough to allow further experiments (thus the *playground* name) and deals with all the technical details as Docker deployment, node discovery and stats reporting.
+The "light" in the name is due to switching the base container from Ubuntu to Ethereum/Client-go which significantly reduces the final image size.
 
 ## Features 
 
