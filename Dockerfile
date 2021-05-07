@@ -1,36 +1,22 @@
-FROM ubuntu:20.04
+FROM ethereum/client-go:alltools-latest
 
-# Switch to ROOT mode
+ENTRYPOINT ["/bin/sh"]
+
 USER root
+RUN adduser -s /bin/sh -D ethuser
+RUN apk update
 
-# Create a non-root user (for later usage by this Dockerfile)
-RUN useradd -m -s /bin/bash ethuser
+RUN apk add git nodejs npm curl bash
 
-RUN apt-get update
-RUN export DEBIAN_FRONTEND=noninteractive && apt-get install -y --no-install-recommends --fix-missing openssh-server vim build-essential git golang ca-certificates iputils-ping curl netcat nodejs npm
-
-# Define the WORKDIR, because recent versions of NodeJS and NPM require it
-# Otherwise packages are installed at the container root folder
 WORKDIR /home/ethuser
-
-# Switch to the LTS version of NodeJS
-RUN npm install -g n && n lts
-
-# Install required packages
 RUN npm install web3 express
 
-# Switch to the non-root user for subsequent commands
-USER ethuser
 
+USER ethuser
 RUN mkdir data config
-RUN git clone https://github.com/ethereum/go-ethereum
-RUN cd go-ethereum && make geth && make all
-COPY --chown=ethuser config /home/ethuser/config
-USER root
-RUN cp /home/ethuser/go-ethereum/build/bin/* /usr/local/bin
-USER ethuser
 
-WORKDIR /home/ethuser
+COPY --chown=ethuser config /home/ethuser/config
+
 RUN git clone https://github.com/cubedro/eth-net-intelligence-api monitor
 COPY ./netstat/app.json monitor
 WORKDIR /home/ethuser/monitor

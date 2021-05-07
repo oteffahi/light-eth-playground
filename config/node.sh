@@ -5,7 +5,7 @@ LOG="/home/ethuser/node.log"
 #
 if [[ $1 = "stop" ]]; then
   echo "Stoping eth node in $HOSTNAME..."
-  kill -9 `pgrep nodejs`
+  kill -9 `pgrep node`
   kill -HUP `pgrep geth`
 fi
 
@@ -16,10 +16,10 @@ if [[ $1 = "start" ]]; then
   echo "Starting eth node in $HOSTNAME..." >> $LOG
   bootnode=`curl ethbn:9090`
   echo "Bootnode: $bootnode" >> $LOG
-  geth -datadir /home/ethuser/data -bootnodes $bootnode --nousb --networkid 500 --mine --rpc --rpccorsdomain "*" --rpcapi "eth,web3,personal,net" --rpcaddr "0.0.0.0" --allow-insecure-unlock 2>> $LOG &
+  geth -datadir /home/ethuser/data -bootnodes $bootnode --networkid 500 --mine --http --http.corsdomain "*" --http.api "eth,web3,personal,net" --http.addr "0.0.0.0" --allow-insecure-unlock 2>> $LOG &
   sleep 2
   localAccount=`geth --exec "eth.coinbase" -verbosity 0 -datadir data/ attach`
-  nodejs /home/ethuser/config/tools/broadcast.js 9091 $localAccount &
+  node /home/ethuser/config/tools/broadcast.js 9091 $localAccount &
   echo "Starting monitor..." >> $LOG
   cd /home/ethuser/monitor
   ./node_modules/pm2/bin/pm2 start app.json &
